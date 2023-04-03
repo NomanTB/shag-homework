@@ -54,7 +54,15 @@ def divider(a, b):
         raise IndexError
     return a/b
 
-data = {10: 2, 2: 5, "123": 4, 18: 0, []: 15, 8 : 4}
+
+try:
+    data = [10 / 2, 2 / 5, "123" / 4, 18 / 0, [] / 15, 8 / 4]
+
+except TypeError:
+    print()
+    print("TypeError: unsupported operand type(s) for /: 'str' and 'int'")
+
+
 
 for key in data:
     try:
@@ -66,3 +74,8 @@ for key in data:
         print("IndexError")
 
 print(result)
+
+
+
+
+
