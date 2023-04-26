@@ -6,13 +6,14 @@ class DZ:
         html = requests.get('https://meteoexpert.org/ru/forecast10/zaporizhzhia/', timeout=100)
         soup = BeautifulSoup(html.text, 'lxml')
 
+        self.pogoda_and_time ={}
+
         for c, i in zip(soup.select('.weekday'), soup.select(".desc")):
-            self.c = c
-            self.i = i
-            print(c.text, '   ', i.text)
-            # cur.execute(f'''
-            #             INSERT INTO POGODA (time, pogodazp) VALUES ('{c.text}', '{i.text}');
-            #             ''')
+
+            self.c = str(c).replace('<div class="weekday">', '').replace('</div>', '')
+            self.i = str(i).replace('div', '').replace('</b>', '').replace('<b>', '').replace('<', '').replace('class="desc">', '').replace("</div>']", '')
+
+            self.pogoda_and_time[self.c] = [self.i]
 
 
     def code_osnova(self):
@@ -23,21 +24,14 @@ class DZ:
             time INTEGER DEFAULT "НЕ ИЗВЕСНО",
             pogodazp TEXT DEFAULT "НЕ ИЗВЕСНО"
             )''')
-            p = self.c
-            p1 = p.text
 
-            g = self.i
-            g1 = g.text
-            cur.execute(f'''
-                    INSERT INTO POGODA (time, pogodazp) VALUES ('{p1}', '{g1}');
-                    ''')
-
-
-
+            for c, i in zip(self.pogoda_and_time.keys(),self.pogoda_and_time.values()):
+                cur.execute(f'''
+                            INSERT INTO POGODA (time, pogodazp) VALUES (\"%s\",\"%s\");
+                            '''%(c,i))
 
 
 
 if __name__ == "__main__":
     d = DZ()
     d.code_osnova()
-    # code_osnova()
